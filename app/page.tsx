@@ -1,7 +1,5 @@
 const Page = () => {
-  return (
-    <div>Page</div>
-  )
+  return <p className="text-3xl text-indigo-500">CoinPulse</p>
 }
 
 export default Page
