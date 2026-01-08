@@ -1,27 +1,33 @@
-import Image from "next/image"
-import DataTable from "./components/DataTable"
+import { Suspense } from 'react'
+import CoinOverview from '@/components/home/CoinOverview'
+import TrendingCoins from '@/components/home/TrendingCoins'
+import {
+  CategoriesFallback,
+  CoinOverviewFallback,
+  TrendingCoinsFallback,
+} from '@/components/home/fallback'
+import Categories from '@/components/home/Categories'
 
-const Page = () => {
-  return <main className="main-container">
-    <section className="home-grid">
-      <div id="coin-overview">
-        <div className="header">
-          <Image src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png" alt="Bitcoin" width={56} height={56} />
-          <div className="info">
-            <p>BitCoin / BTC</p>
-            <h1>$90,470.23</h1>
-          </div>
-        </div>
-      </div>
+const Page = async () => {
+  return (
+    <main className="main-container">
+      <section className="home-grid">
+        <Suspense fallback={<CoinOverviewFallback />}>
+          <CoinOverview />
+        </Suspense>
 
-      <p>Trending Coins</p>
-      <DataTable />
-    </section>
+        <Suspense fallback={<TrendingCoinsFallback />}>
+          <TrendingCoins />
+        </Suspense>
+      </section>
 
-    <section className="w-full mt-7 space-y-4">
-      <p>Categories</p>
-    </section>
-  </main>
+      <section className="w-full mt-7 space-y-4">
+        <Suspense fallback={<CategoriesFallback />}>
+          <Categories />
+        </Suspense>
+      </section>
+    </main>
+  )
 }
 
 export default Page
