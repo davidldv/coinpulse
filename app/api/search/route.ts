@@ -17,9 +17,13 @@ export async function GET(request: Request) {
   const url = new URL(`${BASE_URL}/search`);
   url.searchParams.set('query', query);
 
+  const authHeader = BASE_URL.includes('pro-api.coingecko.com')
+    ? 'x-cg-pro-api-key'
+    : 'x-cg-demo-api-key';
+
   const response = await fetch(url.toString(), {
     headers: {
-      'x-cg-demo-api-key': API_KEY,
+      [authHeader]: API_KEY,
       'Content-Type': 'application/json',
     },
     // Search should be fresh while typing.

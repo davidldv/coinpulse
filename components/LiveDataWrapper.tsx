@@ -10,7 +10,7 @@ import { useCoinGeckoWebSocket } from '@/hooks/useCoinGeckoWebSocket';
 
 const LiveDataWrapper = ({ children, coinId, poolId, coin, coinOHLCData }: LiveDataProps) => {
   const [liveInterval, setLiveInterval] = useState<'1s' | '1m'>('1s');
-  const { trades, ohlcv, price } = useCoinGeckoWebSocket({ coinId, poolId, liveInterval });
+  const { trades, ohlcv, price, isConnected } = useCoinGeckoWebSocket({ coinId, poolId, liveInterval });
 
   const showRecentTrades = Boolean(poolId) && trades.length > 0;
 
@@ -67,8 +67,8 @@ const LiveDataWrapper = ({ children, coinId, poolId, coin, coinOHLCData }: LiveD
           liveOhlcv={ohlcv}
           mode="live"
           initialPeriod="daily"
-          liveInterval={liveInterval}
-          setLiveInterval={setLiveInterval}
+          liveInterval={isConnected ? liveInterval : undefined}
+          setLiveInterval={isConnected ? setLiveInterval : undefined}
         >
           <h4>Trend Overview</h4>
         </CandlestickChart>

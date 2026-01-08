@@ -14,7 +14,7 @@
 
   </div>
 
-  <h3 align="center">CryptoPulse — Analytics Dashboard</h3>
+  <h3 align="center">CoinPulse — Analytics Dashboard</h3>
 </div>
 
 ## 📋 <a name="table">Table of Contents</a>
@@ -26,7 +26,7 @@
 
 ## <a name="introduction">✨ Introduction</a>
 
-CryptoPulse is a high-performance analytics dashboard built with Next.js 16, TailwindCSS v4, and shadcn/ui, delivering real-time market intelligence via CoinGecko’s API and WebSockets. It features high-frequency price tracking and live orderbook streams for low-latency updates, paired with interactive TradingView candlestick charts to visualize OHLCV data with surgical precision. From a dynamic homepage showcasing global stats and trending assets to robust token pages with multi-fiat converters and advanced search tables, the platform provides a modular, developer-friendly stack optimized for speed and clarity.
+CoinPulse is an analytics dashboard built with Next.js 16, TypeScript, TailwindCSS v4, and shadcn/ui. It pulls market data from CoinGecko’s REST API, renders interactive candlestick charts, and includes a global search modal for fast navigation to coin detail pages.
 
 ## <a name="tech-stack">⚙️ Tech Stack</a>
 
@@ -48,15 +48,13 @@ CryptoPulse is a high-performance analytics dashboard built with Next.js 16, Tai
 
 👉 **Token Discovery Page**: A comprehensive, sortable and searchable table featuring key token metrics (Price, 24h change, Market Cap Rank) for mass market analysis, powered by the scalable `/coins/markets` REST API and optimized with pagination for efficient browsing.
 
-👉 **Detailed Token Overview**: Provides an immediate summary of any selected token, including its logo, current price, and market cap rank, utilizing the `/coins/{id}` REST API for core data and the **CGSimplePrice WebSocket** for continuous, live price monitoring.
+👉 **Detailed Coin Page**: Summary view for any selected coin (price, market cap rank, links) using the `/coins/{id}` REST API.
 
-👉 **Interactive Candlestick Chart**: Integrates **TradingView Lightweight Charts** to visualize market trends and price action with surgical precision, rendering multi-timeframe OHLCV data fetched from CoinGecko’s high-performance market endpoints.
+👉 **Interactive Candlestick Chart**: TradingView Lightweight Charts with multiple time ranges powered by `/coins/{id}/ohlc`.
 
-👉 **Real-Time Trades & Orderbook**: Features a live stream of market activity exactly as it happens on the exchange, using low-latency WebSockets to display a constant flow of buy/sell orders and recent trade executions.
+👉 **Optional Live Streaming (Paid plan)**: If you have access to CoinGecko WebSocket (paid plan), the UI can stream live updates. Onchain trades are available only for assets with an on-chain pool.
 
-👉 **Smart Currency Converter**: An interactive tool that allows users to instantly compute coin amounts into dozens of supported fiat and crypto currencies, leveraging the `/simple/supported_vs_currencies` and `/simple/price` endpoints for accurate conversions.
-
-👉 **Exchange & Trading Pairs**: Allows users to analyze trading context by displaying aggregated lists of exchanges and available trading pairs, with all data sourced directly from the dedicated `/exchanges` and `/exchanges/{id}/tickers` REST APIs.
+👉 **Smart Currency Converter**: Converts a coin amount across available quote currencies based on the coin’s `market_data.current_price`.
 
 👉 **Global Search Functionality**: A powerful, unified search bar that allows users to quickly locate any crypto asset by name or symbol, linking directly to the respective Token Detail Page via the CoinGecko `/search` and `/coins/{id}` REST endpoints.
 
@@ -91,17 +89,15 @@ npm install
 
 **Set Up Environment Variables**
 
-Create a new file named `.env` in the root of your project and add the following content:
+Copy `.env.example` to `.env.local` and fill in your key:
 
-```env
-COINGECKO_BASE_URL=https://pro-api.coingecko.com/api/v3
-COINGECKO_API_KEY=
-
-NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL=
-NEXT_PUBLIC_COINGECKO_API_KEY=
+```bash
+cp .env.example .env.local
 ```
 
-Replace the placeholder values with your real credentials. You can get these by signing up at: [**Example**](https://jsm.dev/example).
+Notes:
+- `COINGECKO_BASE_URL` defaults to the Demo API base URL.
+- CoinGecko WebSocket is paid-plan only. If you don’t have access, leave the `NEXT_PUBLIC_...` vars empty and the app will gracefully fall back to REST-only mode.
 
 **Running the Project**
 

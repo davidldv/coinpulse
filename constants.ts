@@ -98,7 +98,8 @@ export const PERIOD_CONFIG: Record<Period, { days: number | string }> = {
   '3months': { days: 90 },
   '6months': { days: 180 },
   yearly: { days: 365 },
-  max: { days: 'max' },
+  // CoinGecko /coins/{id}/ohlc supports up to 365 days.
+  max: { days: 365 },
 };
 
 export const PERIOD_BUTTONS: { value: Period; label: string }[] = [

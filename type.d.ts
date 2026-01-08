@@ -271,6 +271,7 @@ interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
   data: T[];
   rowKey: (row: T, index: number) => React.Key;
+  emptyMessage?: React.ReactNode;
   tableClassName?: string;
   headerClassName?: string;
   headerRowClassName?: string;
@@ -305,7 +306,7 @@ interface SearchItemProps {
 }
 
 interface CoinGeckoErrorBody {
-  error?: string;
+  error?: unknown;
 }
 
 type QueryParams = Record<string, string | number | boolean | undefined>;

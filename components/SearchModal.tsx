@@ -19,8 +19,10 @@ const SearchModal = () => {
   const [results, setResults] = useState<SearchCoin[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMac, setIsMac] = useState(false);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   const trimmedQuery = query.trim();
 
@@ -42,6 +44,10 @@ const SearchModal = () => {
   };
 
   useEffect(() => {
+    setIsMac(navigator.platform.toLowerCase().includes('mac'));
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     // Focus input on open.
     const id = window.setTimeout(() => inputRef.current?.focus(), 0);
@@ -59,7 +65,6 @@ const SearchModal = () => {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      const isMac = navigator.platform.toLowerCase().includes('mac');
       const isK = e.key.toLowerCase() === 'k';
       const isShortcut = isK && ((isMac && e.metaKey) || (!isMac && e.ctrlKey));
 
@@ -74,6 +79,34 @@ const SearchModal = () => {
       if (e.key === 'Escape') {
         e.preventDefault();
         close();
+      }
+
+      if (e.key === 'Tab') {
+        const root = dialogRef.current;
+        if (!root) return;
+
+        const focusable = Array.from(
+          root.querySelectorAll<HTMLElement>(
+            'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])',
+          ),
+        ).filter((el) => !el.hasAttribute('disabled') && el.tabIndex >= 0);
+
+        if (!focusable.length) return;
+
+        const currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
+        const lastIndex = focusable.length - 1;
+
+        if (e.shiftKey) {
+          if (currentIndex <= 0) {
+            e.preventDefault();
+            focusable[lastIndex].focus();
+          }
+        } else {
+          if (currentIndex === lastIndex) {
+            e.preventDefault();
+            focusable[0].focus();
+          }
+        }
       }
 
       if (!shownResults.length) return;
@@ -149,7 +182,7 @@ const SearchModal = () => {
       <button type="button" className="trigger" onClick={() => setOpen(true)}>
         Search
         <span className="kbd">
-          <span>Ctrl</span>
+          <span>{isMac ? '⌘' : 'Ctrl'}</span>
           <span>K</span>
         </span>
       </button>
@@ -164,7 +197,7 @@ const SearchModal = () => {
           }}
           style={{ backgroundColor: 'color-mix(in oklab, var(--dark-900) 70%, transparent)' }}
         >
-          <div className="dialog w-full rounded-lg overflow-hidden">
+          <div ref={dialogRef} className="dialog w-full rounded-lg overflow-hidden">
             <div className="cmd-input p-3">
               <Input
                 ref={inputRef}

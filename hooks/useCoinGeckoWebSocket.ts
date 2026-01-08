@@ -2,7 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const WS_BASE = `${process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL}?x_cg_pro_api_key=${process.env.NEXT_PUBLIC_COINGECKO_API_KEY}`;
+const WS_URL = process.env.NEXT_PUBLIC_COINGECKO_WEBSOCKET_URL;
+const WS_KEY = process.env.NEXT_PUBLIC_COINGECKO_API_KEY;
+
+const buildWsUrl = () => {
+  const base = (WS_URL ?? '').trim();
+  const key = (WS_KEY ?? '').trim();
+
+  if (!base || !key) return null;
+  if (!base.startsWith('ws://') && !base.startsWith('wss://')) return null;
+
+  const url = new URL(base);
+  url.searchParams.set('x_cg_pro_api_key', key);
+  return url.toString();
+};
 
 export const useCoinGeckoWebSocket = ({
   coinId,
@@ -19,7 +32,13 @@ export const useCoinGeckoWebSocket = ({
   const [isWsReady, setIsWsReady] = useState(false);
 
   useEffect(() => {
-    const ws = new WebSocket(WS_BASE);
+    const wsUrl = buildWsUrl();
+    if (!wsUrl) {
+      setIsWsReady(false);
+      return;
+    }
+
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     const send = (payload: Record<string, unknown>) => ws.send(JSON.stringify(payload));
@@ -79,9 +98,7 @@ export const useCoinGeckoWebSocket = ({
 
     ws.onclose = () => setIsWsReady(false);
 
-    ws.onerror = (error) => {
-      setIsWsReady(false);
-    };
+    ws.onerror = () => setIsWsReady(false);
 
     return () => ws.close();
   }, []);
